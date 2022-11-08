@@ -1,0 +1,8 @@
+version: '3.0'
+
+services:
+  app:
+    build: .
+    entrypoint: "tail -f /dev/null"
+    volumes:
+      - ".:/home/go/app"
