@@ -25,7 +25,7 @@ func NewOrder(price float64, tax float64) (*Order, error) {
 	if err != nil {
 		return nil, err
 	}
-	order.FinalPrice = order.CalculateFinalPrice()
+
 	return &order, nil
 }
 
@@ -42,7 +42,11 @@ func (o *Order) IsValid() error {
 	return nil
 }
 
-func (o *Order) CalculateFinalPrice() float64 {
-	FinalPrice := o.Price * (1 + o.Tax/100)
-	return FinalPrice
+func (o *Order) CalculateFinalPrice() error {
+	err := o.IsValid()
+	if err != nil {
+		return err
+	}
+	o.FinalPrice = o.Price * (1 + o.Tax/100)
+	return nil
 }
