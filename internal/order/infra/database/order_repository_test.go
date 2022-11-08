@@ -2,7 +2,6 @@ package database
 
 import (
 	"database/sql"
-	"fmt"
 	"testing"
 
 	"github.com/danilodcn/go-intensivo/internal/order/entity"
@@ -18,20 +17,16 @@ type OrderRepositoryTestSuite struct {
 }
 
 func (suite *OrderRepositoryTestSuite) SetupSuite() {
-	fmt.Println("Inicio do SetupSuite")
 	db, err := sql.Open("sqlite3", ":memory:")
 	suite.NoError(err)
 
 	_, err = db.Exec("CREATE TABLE IF NOT EXISTS orders (id varchar(255) NOT NULL, price float NOT NULL, tax float NOT NULL, final_price float NOT NULL, PRIMARY KEY (id))")
 	suite.NoError(err)
 	suite.Db = db
-	fmt.Println("Fim do SetupSuite")
 }
 
 func (suite *OrderRepositoryTestSuite) TearDownTest() {
-	fmt.Println("Inicio do TearDownTest")
 	suite.Db.Close()
-	fmt.Println("Fim do TearDownTest")
 }
 
 func TestSuite(t *testing.T) {
