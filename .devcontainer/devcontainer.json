@@ -21,7 +21,8 @@
 		"vscode": {
 			"extensions": [
 				"streetsidesoftware.code-spell-checker",
-				"golang.go"
+				"golang.go",
+				"eamodio.gitlens"
 			]
 		}
 	}
