@@ -45,5 +45,5 @@ func TestGivenAPriceAndTax_WhenCallCalculateFinalPrice_ThenIShouldSetFinalPrice(
 	assert.Nil(t, err)
 	err = order.CalculateFinalPrice()
 	assert.Nil(t, err)
-	assert.Equal(t, order.FinalPrice, 102.0)
+	assert.Equal(t, 102.0, order.FinalPrice)
 }
