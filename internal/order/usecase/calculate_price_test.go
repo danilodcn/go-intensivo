@@ -19,6 +19,7 @@ type CalculateFinalPriceUseCaseTestSuite struct {
 }
 
 func (suite *CalculateFinalPriceUseCaseTestSuite) SetupSuite() {
+	println("aqui")
 	db, err := sql.Open("sqlite3", ":memory:")
 	suite.NoError(err)
 
@@ -39,7 +40,7 @@ func (suite *CalculateFinalPriceUseCaseTestSuite) TestCalculateFinalPrice() {
 	order, err := entity.NewOrder(20, 32.5)
 	suite.NoError(err)
 	order.CalculateFinalPrice()
-	calculateFinalPriceDTO := OrderInputDTO{
+	calculateFinalPriceDTO := &OrderInputDTO{
 		ID:    order.ID,
 		Price: order.Price,
 		Tax:   order.Tax,

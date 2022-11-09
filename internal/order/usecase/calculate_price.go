@@ -6,7 +6,7 @@ import (
 )
 
 type OrderInputDTO struct {
-	ID    string
+	ID    string `default:""`
 	Price float64
 	Tax   float64
 }
@@ -28,9 +28,11 @@ func NewCalculateFinalPriceUseCase(orderRepository *database.OrderRepository) *C
 	}
 }
 
-func (c *CalculateFinalPriceUseCase) Execute(input OrderInputDTO) (*OrderOutputDTO, error) {
+func (c *CalculateFinalPriceUseCase) Execute(input *OrderInputDTO) (*OrderOutputDTO, error) {
 	order, err := entity.NewOrder(input.Price, input.Tax)
-	order.ID = input.ID
+	if input.ID != "" {
+		order.ID = input.ID
+	}
 
 	if err != nil {
 		return nil, err
@@ -46,9 +48,9 @@ func (c *CalculateFinalPriceUseCase) Execute(input OrderInputDTO) (*OrderOutputD
 	}
 
 	return &OrderOutputDTO{
-		ID: order.ID,
-		Price: order.Price,
-		Tax: order.Tax,
+		ID:         order.ID,
+		Price:      order.Price,
+		Tax:        order.Tax,
 		FinalPrice: order.FinalPrice,
 	}, nil
 }
