@@ -1,4 +1,6 @@
+*.db
 *.txt
+.docker/
 .DS_Store
 *.[56789ao]
 *.a[56789o]
@@ -28,7 +30,6 @@ _testmain.go
 /misc/cgo/life/run.out
 /misc/cgo/stdio/run.out
 /misc/cgo/testso/main
-/pkg/
 /src/*.*/
 /src/cmd/cgo/zdefaultcc.go
 /src/cmd/dist/dist
