@@ -22,7 +22,13 @@
 			"extensions": [
 				"streetsidesoftware.code-spell-checker",
 				"golang.go",
-				"eamodio.gitlens"
+				"eamodio.gitlens",
+				"dracula-theme.theme-dracula",
+				"miguelsolorio.fluent-icons",
+				"VisualStudioExptTeam.vscodeintellicode",
+				"VisualStudioExptTeam.intellicode-api-usage-examples",
+				"ms-azuretools.vscode-docker",
+				"johnpapa.vscode-peacock"
 			]
 		}
 	}
