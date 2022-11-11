@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"time"
 
 	"github.com/danilodcn/go-intensivo/internal/order/infra/database"
 	"github.com/danilodcn/go-intensivo/internal/order/usecase"
@@ -12,10 +13,11 @@ import (
 
 	// sqlite3
 	_ "github.com/mattn/go-sqlite3"
+	_ "github.com/lib/pq"
 )
 
 func getConnection() *sql.DB {
-	db, err := sql.Open("sqlite3", "./orders.db")
+	db, err := sql.Open("postgres", "postgres://postgres:postgres@db:5432/postgres?sslmode=disable")
 	if err != nil {
 		panic(err)
 	}
@@ -28,7 +30,6 @@ func getConnection() *sql.DB {
 }
 
 func main() {
-
 	db := getConnection()
 
 	ch, err := rabbitmq.OpenChanel()
@@ -42,29 +43,59 @@ func main() {
 	defer ch.Close()
 
 	out := make(chan amqp.Delivery)
+	total := make(chan int)
 
 	go rabbitmq.Consume(ch, out)
-	println("Consumer is running...\n")
+	time.Sleep(10 * time.Millisecond)
+	println("Consumer is running...")
+	numberOfWorkers := 80
+	for i := 1; i <= numberOfWorkers; i++ {
+		go worker(out, total, uc, i)
+	}
+
+	go getTotal(total)
+	forever := make(chan int)
+
+	<-forever
+}
+
+func getTotal(total chan int) {
+	println("get total is running ...")
+	n := 0
+	for i := range total {
+		n += i
+		println(n)
+	}
+}
+
+func worker(out chan amqp.Delivery, total chan int, uc *usecase.CalculateFinalPriceUseCase, id int) {
+	workerName := fmt.Sprint("[WORKER ", id, "] ")
+	println(workerName, " is running...")
 	number := 0
+
 	for msg := range out {
 		var orderInputDTO usecase.OrderInputDTO
-		// println(string(msg.Body), "\n")
 		err := json.Unmarshal(msg.Body, &orderInputDTO)
 
 		if err != nil {
-			print("erro no json: ", err.Error(), "\n")
+			println("erro no json: ", err.Error())
 			continue
 		}
 		_, err = uc.Execute(&orderInputDTO)
 		if err != nil {
-			print("erro ao executar: ", err.Error(), "\n")
+			println("erro ao executar: ", err.Error())
+			fmt.Println(orderInputDTO)
+			// panic(err)
+			msg.Ack(false)
 			continue
 		}
 		number++
 		if number%10 == 0 {
-			fmt.Println(orderInputDTO)
+			fmt.Println(workerName, orderInputDTO)
 		}
-		fmt.Println(number, " process messages")
 		msg.Ack(false)
+
+		total <- 1
+		time.Sleep(time.Millisecond * 0)
 	}
 }

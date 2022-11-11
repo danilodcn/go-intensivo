@@ -48,16 +48,15 @@ func main() {
 		panic(err)
 	}
 	defer ch.Close()
-	number := 1000
-	println("generating", number, "orders")
-	for i := 0; i <= number; i++ {
+	numberOfMessages := 2000
+	println("generating", numberOfMessages, "orders")
+	for i := 1; i <= numberOfMessages; i++ {
 		err := Producer(ch, GenerateOrder())
 		if err != nil {
 			println(err.Error())
 		}
 		println(i+1, "messages generated")
-		// if i%10 == 0 {
-		// }
-		time.Sleep(time.Millisecond * 60)
+
+		time.Sleep(time.Millisecond * 1)
 	}
 }
